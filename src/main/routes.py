@@ -3,10 +3,10 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
 
-from app import db
-from app.main import bp
-from app.main.forms import EditProfileForm
-from app.models import User
+from src import db
+from src.main import bp
+from src.main.forms import EditProfileForm
+from src.models import User
 
 
 @bp.before_request
