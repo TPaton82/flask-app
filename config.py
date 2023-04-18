@@ -8,9 +8,9 @@ load_dotenv(os.path.join(basedir, ".env"))
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY')
 
-    if os.environ.get('DATABASE_URL'):
-        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("postgres://", "postgresql://", 1)
+    if os.getenv('DATABASE_URL'):
+        SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL').replace("postgres://", "postgresql://", 1)
     else:
-        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+        SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'instance', 'app.db')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False

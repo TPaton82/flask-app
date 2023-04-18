@@ -4,5 +4,5 @@ __pycache__/
 
 # Files
 *.env
-app.db
+instance/app.db
 *.pyc

@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+import sqlalchemy as sa
 
 
 db = SQLAlchemy()
@@ -23,13 +24,30 @@ def create_app(config_class=Config):
     login.init_app(app)
     bootstrap.init_app(app)
 
-    from src.errors import bp as errors_bp
-    app.register_blueprint(errors_bp)
+    # Register all blueprints
+    register_blueprints(app)
 
-    from src.auth import bp as auth_bp
-    app.register_blueprint(auth_bp, url_prefix="/auth")
+    # Check if the database needs to be initialized
+    engine = sa.create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    inspector = sa.inspect(engine)
 
-    from src.main import bp as main_bp
-    app.register_blueprint(main_bp)
+    if not inspector.has_table("users"):
+        with app.app_context():
+            db.drop_all()
+            db.create_all()
+            app.logger.info('Initialized the database!')
+    else:
+        app.logger.info('Database already contains the `users` table.')
 
     return app
+
+
+def register_blueprints(app):
+    """Register all blueprints"""
+    from src.errors import bp as errors_bp
+    from src.auth import bp as auth_bp
+    from src.main import bp as main_bp
+
+    app.register_blueprint(errors_bp)
+    app.register_blueprint(auth_bp, url_prefix="/auth")
+    app.register_blueprint(main_bp)
